@@ -16,6 +16,17 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='userdashboardmodule',
             name='user',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL, verbose_name='user'),
+            field=models.PositiveIntegerField(verbose_name='user', null=True)
+        ),
+        migrations.RunSQL("""
+                    UPDATE dashboard_userdashboardmodule SET "user" = NULL 
+                    WHERE NOT EXISTS ( SELECT id FROM auth_user WHERE id = dashboard_userdashboardmodule.user);
+                    """
+            
+        ),
+        migrations.AlterField(
+            model_name='userdashboardmodule',
+            name='user',
+            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL, verbose_name='user')
         ),
     ]
